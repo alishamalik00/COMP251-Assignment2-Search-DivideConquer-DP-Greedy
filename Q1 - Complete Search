@@ -1,0 +1,119 @@
+import java.util.*;
+
+public class A2_Q1 {
+//track min balls left and min moves needed 
+    public static int mBalls;
+    public static int mMoves;
+
+    //movement directiosn 
+    public static final int[][] directions ={{-1, 0},{1, 0},{0, -1},{0, 1}}; // Up, Down, Left, Right
+   // private static char ballChar = 'B';
+    //private static char ballEmptyChar = 'O';
+    
+
+//counts intial num of balls and then best move sequence
+    public static int[] game(String[][] board) {
+        int globalBalls =countTotalBalls(board); //gets intial ball count
+        mBalls=globalBalls;
+        mMoves=globalBalls -1;//worse case ball moves once
+
+        computeMove(board,globalBalls,0);//start recuisve moves
+        return new int[]{mBalls, mMoves};//best possble result
+    }
+
+  private static void computeMove(String[][]board,int balls,int moves) {
+    boolean move =false;//track if move was made
+
+    int i=0;
+    while (i <board.length) {
+        for (int j=0; j<board[i].length; j++) {
+            if (!board[i][j].equals("o")) {//skip if not ball
+                continue;
+            }
+
+
+
+//    int dir=0;
+//             while (dir<directions.length) {//try all movement directions
+//                 int[] d =directions[dir];
+//                 int dx=d[0];
+//                 int dy=d[1];
+           int dir=0;
+            while (dir<directions.length) {//try all movement directions
+                int[] d =directions[dir];
+                int dx=d[0];
+                int dy=d[1];
+
+
+
+
+                int x1=i+dx; //compute new postions based on direction
+                int y1=j+dy;
+                //for each up, down etc etc
+                int x2=i+2 *dx;
+                //for each up, down etc etc
+                int y2=j+2* dy;
+                //check if move valid 
+                if (VerifyMove(board, i,j,x1, y1, x2, y2)) {
+                    applyMove(board,i,j,x1,y1,x2,y2); //move da ball
+
+                    computeMove(board, balls -1, moves+ 1); //recurivly explore next moves 
+                    undoMove(board,i,j, x1, y1, x2,y2);//undo mv for back tracking
+
+                    move = true; //move amed
+                }
+                dir++;}}
+        i++;
+    }  if (!move) {
+        // If no move was made, check if this is the best solution
+        if (balls< mBalls||(balls ==mBalls && moves< mMoves)) {  // <-- FIXED HERE
+            mBalls=balls;
+            mMoves =moves;  //updating ball and moves count
+         } }
+}
+
+
+
+        private static boolean VerifyMove(String[][] board, int x, int y, int x1, int y1, int x2, int y2) {
+    // if the first jump position x1, y1 is within bounds
+            if (x1<0||x1>= board.length|| y1 < 0 ||y1 >= board[0].length) {
+
+
+
+                return false;
+            }
+    //  if the second jump is within bounds
+            if (x2< 0||x2>=board.length||y2 < 0|| y2 >= board[0].length) {
+                return false;
+            }//chck logic
+    // if the middle position contains a ball
+            if (!board[x1][y1].equals("o")){
+                return false;}
+    // if the destination is empty
+            if (!board[x2][y2].equals(".")){
+                return false;}
+    // all checks pass, the move is valid
+            return true;}
+    private static void applyMove(String[][] board, int x,int y,int x1,int y1,int x2,int y2) {
+        board[x][y]=".";
+        board[x1][y1]= ".";
+        board[x2][y2]= "o";//play around w
+
+
+
+    } private static void undoMove(String[][] board, int x,int y,int x1,int y1, int x2, int y2) {
+        board[x][y] = "o";
+        board[x1][y1] ="o";
+       // board[x1][y1] ="o";
+        board[x2][y2] =".";
+    }
+//counts total num of balls on baord at the start of game
+    private static int countTotalBalls(String[][] board){
+        int ballCount =0;
+        for(String[] row:board){//nested lookps -- find better 
+            for(String cell :row){
+                if(cell.equals("o")){
+                    ballCount++;
+                }  }}return ballCount;
+    }
+}
