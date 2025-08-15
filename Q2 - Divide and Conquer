@@ -1,0 +1,61 @@
+import java.util.*;
+import java.math.BigInteger;//part of starter
+
+public class A2_Q2 {
+
+    public static BigInteger num_swaps(int[] numbers) {//starter code 
+        int arrLen=numbers.length;
+        int[] temporary=new int[arrLen];//to help w merging
+
+
+
+        //call merge and count number of swaps
+        return BigInteger.valueOf(startMergeSort(numbers,temporary, 0,arrLen - 1));
+    }
+
+    private static long startMergeSort(int[] array, int[] temporary,int left,int right) {
+        return divideAndCount(array, temporary,left,right);
+    }
+    //divide of mergeosry and swap count
+    private static long divideAndCount(int[] array,int[] temporary,int left,int right) {
+        if (left>=right){
+            return 0; //BC no swaps if one element 
+        }//for sure
+
+        int mid=left+(right-left)/2;  // mid so no overflow 
+
+        
+        long leftSide=divideAndCount(array, temporary,left, mid);//  left half first
+        long rightSide = divideAndCount(array, temporary,mid + 1, right);// then right half 
+        long mergeBothSides = Merge(array, temporary, left,mid, right); 
+        // merging halves and count cross-swaps
+
+        //sum of swaps from all steps       
+        return leftSide + rightSide + mergeBothSides; 
+    }
+    //inversion and count swaps
+    private static long Merge(int[] inital, int[] temporary, int start, int middle, int end) {
+        int left =start, right = middle + 1, mergeIdx =start;
+        long inversionCounter = 0; //tracks number of swps needed 
+
+        for (int i =0; left <= middle && right <= end; mergeIdx++) {    // merge while checking for swaps 
+
+            if (inital[left] <= inital[right]) {
+                temporary[mergeIdx] = inital[left++]; //no swap needed, move left pointer
+            } else {//check this
+                temporary[mergeIdx] = inital[right++];//need swap, move right pointer
+                inversionCounter += (middle - left + 1); // number of elements kef in keft half are the swaps
+            }
+        } // if lefterover in left half, copy them
+        for (int i=0; left<=middle;left++,mergeIdx++) {
+            temporary[mergeIdx]=inital[left];
+        }// if lefterover in right half, copy them
+        for (int i=0;right<=end; right++,mergeIdx++) {
+            temporary[mergeIdx]=inital[right];
+        }//copying sorted elements back into the original array
+        for (int i= start;i<= end;i++) {
+            inital[i]=temporary[i];
+        } return inversionCounter;//retuns total number of swaps 
+    }
+  
+}
