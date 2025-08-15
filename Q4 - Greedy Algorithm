@@ -1,0 +1,48 @@
+import java.util.*;
+
+
+public class HW_Sched {
+    ArrayList<Assignment> Assignments = new ArrayList<>();
+    int lastDeadline = 0;
+    int m;
+
+    protected HW_Sched(int[] weights, int[] deadlines, int size) {
+        for (int i=0; i<size; i++) {
+            Assignment homework = new Assignment(i, weights[i], deadlines[i]);
+            this.Assignments.add(homework);
+            if (homework.deadline > lastDeadline) {
+                lastDeadline = homework.deadline;
+            }
+        }
+        m =size;
+    }
+
+    public int[] SelectAssignments() {
+        // Sort assignments by weight (descending), then by deadline (ascending)
+
+        Collections.sort(Assignments, new Assignment());
+
+        // Initialize homeworkPlan with -1 (indicating empty slots)
+        int[] homeworkPlan =new int[lastDeadline];
+        for (int i=0; i<homeworkPlan.length;++i) {
+             homeworkPlan[i] = -1;
+        }
+
+        // Greedily schedule assignments
+        for (int i =0; i< Assignments.size(); i++) {
+            Assignment assignment =Assignments.get(i);
+            // place in avail spot
+            for (int j=assignment.deadline- 1;j >=0; j--) {
+                //empty slot is found
+                if (homeworkPlan[j]==-1) { 
+                    homeworkPlan[j]=assignment.number; //aasingment number stroed 
+                    break;
+                }
+            }
+        }
+
+        return homeworkPlan;
+    }
+
+
+}
