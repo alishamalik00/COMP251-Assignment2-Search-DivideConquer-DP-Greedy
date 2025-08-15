@@ -1,0 +1,54 @@
+import java.util.*;
+
+public class A2_Q3 {
+    
+    public static String directions(int[] distances) {
+        int arrLength =distances.length;
+        ArrayList<String> visited =new ArrayList<>();
+
+
+        char[] pathArr =new char[arrLength];  //using array to build step by step 
+        String[] optimalPath =new String[]      {"IMPOSSIBLE"};//defautl for no valid case 
+        
+        
+        computePath(0,0,0, distances, visited, optimalPath, pathArr);
+        return optimalPath[0];//returns best path 
+    }
+
+    private static void computePath(int index,int height, int mHeight, int[] distances, 
+                                    ArrayList<String> visited, String[] optimalPath, char[] pathArr) {
+        int arrLen=distances.length; 
+        //???
+        if (index==arrLen){ //base case to see if go through
+            if (height==0){ //@ ground level is valid path 
+                optimalPath[0]=new String(pathArr);  // storing result 
+            }
+            //done with present path & return to prev step
+            return;
+        }
+        // memoization
+        String key=index+","+ height; //store curr position and hieght as key
+        if(visited.contains(key)){ //MAKE SURE RIGHT
+            
+            
+            
+            return;
+        }
+        visited.add(key); //marking as visited
+        //going up 
+        pathArr[index]='U';  // mark curr step as u
+        computePath(index+1,height+ distances[index], Math.max(mHeight, height + distances[index]), distances, visited, optimalPath, pathArr);
+
+        // try down
+        if (height-distances[index] >= 0) { //only if not less than zero 
+
+
+
+            pathArr[index]='D';  //mark as down
+            computePath(index+1, height-distances[index], mHeight, distances, visited, optimalPath, pathArr);
+        }
+
+     
+      
+    }
+}
